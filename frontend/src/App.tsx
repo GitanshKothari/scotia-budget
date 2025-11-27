@@ -6,12 +6,9 @@ import MainLayout from './layouts/MainLayout';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import DashboardPage from './pages/DashboardPage';
-import AccountsPage from './pages/AccountsPage';
 import TransactionsPage from './pages/TransactionsPage';
 import BudgetsPage from './pages/BudgetsPage';
-import GoalsPage from './pages/GoalsPage';
 import SettingsPage from './pages/SettingsPage';
-import AdminPage from './pages/AdminPage';
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -27,16 +24,6 @@ function AppRoutes() {
             <ProtectedRoute>
               <MainLayout pageTitle="Dashboard">
                 <DashboardPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/accounts"
-          element={
-            <ProtectedRoute>
-              <MainLayout pageTitle="Accounts">
-                <AccountsPage />
               </MainLayout>
             </ProtectedRoute>
           }
@@ -62,31 +49,11 @@ function AppRoutes() {
           }
         />
         <Route
-          path="/goals"
-          element={
-            <ProtectedRoute>
-              <MainLayout pageTitle="Goals">
-                <GoalsPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
           path="/settings"
           element={
             <ProtectedRoute>
               <MainLayout pageTitle="Settings">
                 <SettingsPage />
-              </MainLayout>
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute>
-              <MainLayout pageTitle="Admin">
-                <AdminPage />
               </MainLayout>
             </ProtectedRoute>
           }

@@ -29,32 +29,27 @@ export const exportTransactionsCsv = async (req: AuthRequest, res: Response) => 
       return res.status(500).json({ success: false, message: 'Failed to fetch transactions' });
     }
 
-    // Fetch accounts and categories for name resolution
-    const accountsResponse = await coreService.callCore('/core/accounts', 'GET', undefined, userId);
+    // Fetch categories for name resolution
     const categoriesResponse = await coreService.callCore('/core/categories', 'GET', undefined, userId);
 
-    if (!accountsResponse.success || !categoriesResponse.success) {
-      return res.status(500).json({ success: false, message: 'Failed to fetch accounts or categories' });
+    if (!categoriesResponse.success) {
+      return res.status(500).json({ success: false, message: 'Failed to fetch categories' });
     }
 
-    const accounts = accountsResponse.data || [];
     const categories = categoriesResponse.data || [];
     const transactions = transactionsResponse.data || [];
 
-    // Create maps for quick lookup
-    const accountMap = new Map(accounts.map((acc: any) => [acc.id, acc.name]));
+    // Create map for quick lookup
     const categoryMap = new Map(categories.map((cat: any) => [cat.id, cat.name]));
 
     // Generate CSV
-    const csvRows = ['date,accountName,categoryName,type,amount,description,merchantName'];
+    const csvRows = ['date,categoryName,type,amount,description,merchantName'];
     
     for (const transaction of transactions) {
       const date = new Date(transaction.date).toISOString().split('T')[0];
-      const accountName = accountMap.get(transaction.accountId) || 'Unknown';
       const categoryName = transaction.categoryId ? (categoryMap.get(transaction.categoryId) || 'Uncategorized') : 'Uncategorized';
       const row = [
         date,
-        accountName,
         categoryName,
         transaction.type,
         transaction.amount,

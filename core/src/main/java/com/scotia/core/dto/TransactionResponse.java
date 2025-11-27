@@ -11,9 +11,7 @@ import java.util.UUID;
 public class TransactionResponse {
     private UUID id;
     private UUID userId;
-    private UUID accountId;
     private UUID categoryId;
-    private Transaction.TransactionType type;
     private BigDecimal amount;
     private String description;
     private String merchantName;
@@ -25,9 +23,7 @@ public class TransactionResponse {
         TransactionResponse response = new TransactionResponse();
         response.setId(transaction.getId());
         response.setUserId(transaction.getUserId());
-        response.setAccountId(transaction.getAccountId());
         response.setCategoryId(transaction.getCategoryId());
-        response.setType(transaction.getType());
         response.setAmount(transaction.getAmount());
         response.setDescription(transaction.getDescription());
         response.setMerchantName(transaction.getMerchantName());

@@ -38,9 +38,6 @@ public class UserController {
         if (request.getName() != null) {
             user.setName(request.getName());
         }
-        if (request.getPreferredCurrency() != null) {
-            user.setPreferredCurrency(request.getPreferredCurrency());
-        }
         if (request.getThemePreference() != null) {
             if (request.getThemePreference() != User.ThemePreference.LIGHT &&
                 request.getThemePreference() != User.ThemePreference.DARK &&

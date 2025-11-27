@@ -30,13 +30,6 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UserRole role = UserRole.USER;
-
-    @Column(nullable = false)
-    private String preferredCurrency = "CAD";
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private ThemePreference themePreference = ThemePreference.SYSTEM;
 
     @Column(nullable = false, updatable = false)
@@ -54,10 +47,6 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public enum UserRole {
-        USER, ADMIN
     }
 
     public enum ThemePreference {

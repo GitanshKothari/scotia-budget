@@ -12,26 +12,18 @@ import java.util.UUID;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
-    List<Transaction> findByUserId(UUID userId);
     
-    @Query("SELECT t FROM Transaction t WHERE t.userId = :userId " +
-           "AND (:accountId IS NULL OR t.accountId = :accountId) " +
-           "AND (:categoryId IS NULL OR t.categoryId = :categoryId) " +
-           "AND (:startDate IS NULL OR t.date >= :startDate) " +
-           "AND (:endDate IS NULL OR t.date <= :endDate) " +
-           "AND (:minAmount IS NULL OR t.amount >= :minAmount) " +
-           "AND (:maxAmount IS NULL OR t.amount <= :maxAmount) " +
-           "AND (:search IS NULL OR LOWER(t.description) LIKE LOWER(CONCAT('%', :search, '%')) " +
-           "OR LOWER(t.merchantName) LIKE LOWER(CONCAT('%', :search, '%')))")
+    @Query(value = "SELECT t.id, t.user_id, t.category_id, t.amount, t.description, " +
+           "t.merchant_name, t.date, t.created_at, t.updated_at " +
+           "FROM transactions t WHERE t.user_id = :userId " +
+           "AND (t.category_id = COALESCE(:categoryId, t.category_id)) " +
+           "AND (t.date >= COALESCE(:startDate, CAST('1970-01-01' AS timestamp))) " +
+           "AND (t.date <= COALESCE(:endDate, CAST('9999-12-31' AS timestamp)))", nativeQuery = true)
     List<Transaction> findWithFilters(
         @Param("userId") UUID userId,
-        @Param("accountId") UUID accountId,
         @Param("categoryId") UUID categoryId,
         @Param("startDate") LocalDateTime startDate,
-        @Param("endDate") LocalDateTime endDate,
-        @Param("minAmount") java.math.BigDecimal minAmount,
-        @Param("maxAmount") java.math.BigDecimal maxAmount,
-        @Param("search") String search
+        @Param("endDate") LocalDateTime endDate
     );
 }
 

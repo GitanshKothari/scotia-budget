@@ -31,7 +31,6 @@ router.post('/login', async (req: Request, res: Response) => {
     const payload: JWTPayload = {
       sub: user.id,
       email: user.email,
-      role: user.role,
       exp: Math.floor(Date.now() / 1000) + (2 * 60 * 60) // 2 hours
     };
 

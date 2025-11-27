@@ -9,20 +9,10 @@ import java.util.UUID;
 
 @Data
 public class DashboardSummaryResponse {
-    private List<AccountSummary> accounts;
     private List<SpendingByCategory> spendingByCategory;
     private List<DailySpending> dailySpending;
     private List<BudgetSummary> budgets;
     private BigDecimal safeToSpend;
-    private List<GoalSummary> goals;
-
-    @Data
-    public static class AccountSummary {
-        private UUID id;
-        private String name;
-        private String type;
-        private BigDecimal currentBalance;
-    }
 
     @Data
     public static class SpendingByCategory {
@@ -44,16 +34,6 @@ public class DashboardSummaryResponse {
         private String categoryName;
         private BigDecimal monthlyLimit;
         private BigDecimal spent;
-    }
-
-    @Data
-    public static class GoalSummary {
-        private UUID id;
-        private String name;
-        private BigDecimal targetAmount;
-        private BigDecimal currentAmount;
-        private Double progressPercent;
-        private String status;
     }
 }
 

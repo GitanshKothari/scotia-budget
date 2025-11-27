@@ -35,8 +35,6 @@ public class AuthController {
         user.setEmail(request.getEmail());
         user.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         user.setName(request.getName());
-        user.setRole(User.UserRole.USER);
-        user.setPreferredCurrency("CAD");
         user.setThemePreference(User.ThemePreference.SYSTEM);
 
         User savedUser = userRepository.save(user);

@@ -23,15 +23,8 @@ public class Transaction {
     @Column(nullable = false, columnDefinition = "uuid")
     private UUID userId;
 
-    @Column(nullable = false, columnDefinition = "uuid")
-    private UUID accountId;
-
     @Column(nullable = true, columnDefinition = "uuid")
     private UUID categoryId;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TransactionType type;
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal amount;
@@ -60,10 +53,6 @@ public class Transaction {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
-    }
-
-    public enum TransactionType {
-        DEBIT, CREDIT
     }
 }
 

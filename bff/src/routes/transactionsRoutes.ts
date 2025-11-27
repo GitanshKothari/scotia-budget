@@ -12,7 +12,6 @@ router.get('/', async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.id;
     const queryParams = new URLSearchParams();
-    if (req.query.accountId) queryParams.append('accountId', req.query.accountId as string);
     if (req.query.categoryId) queryParams.append('categoryId', req.query.categoryId as string);
     if (req.query.startDate) queryParams.append('startDate', req.query.startDate as string);
     if (req.query.endDate) queryParams.append('endDate', req.query.endDate as string);
@@ -36,9 +35,6 @@ router.post('/', async (req: AuthRequest, res: Response) => {
     // Basic validation
     if (!req.body.amount || req.body.amount <= 0) {
       return res.status(400).json({ success: false, message: 'Amount must be positive' });
-    }
-    if (!req.body.type || !['DEBIT', 'CREDIT'].includes(req.body.type)) {
-      return res.status(400).json({ success: false, message: 'Type must be DEBIT or CREDIT' });
     }
 
     const userId = req.user!.id;

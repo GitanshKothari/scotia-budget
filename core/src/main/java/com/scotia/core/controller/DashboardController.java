@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
@@ -19,23 +18,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/core/dashboard")
 public class DashboardController {
 
-    private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
     private final BudgetRepository budgetRepository;
     private final CategoryRepository categoryRepository;
-    private final SavingsGoalRepository goalRepository;
 
     public DashboardController(
-            AccountRepository accountRepository,
             TransactionRepository transactionRepository,
             BudgetRepository budgetRepository,
-            CategoryRepository categoryRepository,
-            SavingsGoalRepository goalRepository) {
-        this.accountRepository = accountRepository;
+            CategoryRepository categoryRepository) {
         this.transactionRepository = transactionRepository;
         this.budgetRepository = budgetRepository;
         this.categoryRepository = categoryRepository;
-        this.goalRepository = goalRepository;
     }
 
     @GetMapping("/summary")
@@ -53,30 +46,18 @@ public class DashboardController {
 
         DashboardSummaryResponse response = new DashboardSummaryResponse();
 
-        // Accounts
-        List<Account> accounts = accountRepository.findByUserId(userId);
-        response.setAccounts(accounts.stream().map(acc -> {
-            DashboardSummaryResponse.AccountSummary summary = new DashboardSummaryResponse.AccountSummary();
-            summary.setId(acc.getId());
-            summary.setName(acc.getName());
-            summary.setType(acc.getType().name());
-            summary.setCurrentBalance(acc.getCurrentBalance());
-            return summary;
-        }).collect(Collectors.toList()));
-
-        // Get all categories
-        List<Category> allCategories = new ArrayList<>(categoryRepository.findByUserIdIsNull());
-        allCategories.addAll(categoryRepository.findByUserId(userId));
+        // Only get default categories (no custom categories)
+        List<Category> allCategories = categoryRepository.findByUserIdIsNull();
         Map<UUID, String> categoryMap = allCategories.stream()
                 .collect(Collectors.toMap(Category::getId, Category::getName));
 
         // Get transactions for the month
         List<Transaction> transactions = transactionRepository.findWithFilters(
-                userId, null, null, startDateTime, endDateTime, null, null, null);
+                userId, null, startDateTime, endDateTime);
 
         // Spending by category
         Map<UUID, BigDecimal> spendingByCategoryId = transactions.stream()
-                .filter(t -> t.getType() == Transaction.TransactionType.DEBIT && t.getCategoryId() != null)
+                .filter(t -> t.getCategoryId() != null)
                 .collect(Collectors.groupingBy(
                         Transaction::getCategoryId,
                         Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add)
@@ -94,7 +75,6 @@ public class DashboardController {
 
         // Daily spending
         Map<LocalDate, BigDecimal> dailySpendingMap = transactions.stream()
-                .filter(t -> t.getType() == Transaction.TransactionType.DEBIT)
                 .collect(Collectors.groupingBy(
                         t -> t.getDate().toLocalDate(),
                         Collectors.reducing(BigDecimal.ZERO, Transaction::getAmount, BigDecimal::add)
@@ -150,24 +130,6 @@ public class DashboardController {
             safeToSpend = BigDecimal.ZERO;
         }
         response.setSafeToSpend(safeToSpend);
-
-        // Goals
-        List<SavingsGoal> goals = goalRepository.findByUserId(userId);
-        response.setGoals(goals.stream().map(goal -> {
-            DashboardSummaryResponse.GoalSummary summary = new DashboardSummaryResponse.GoalSummary();
-            summary.setId(goal.getId());
-            summary.setName(goal.getName());
-            summary.setTargetAmount(goal.getTargetAmount());
-            summary.setCurrentAmount(goal.getCurrentAmount());
-            summary.setStatus(goal.getStatus().name());
-            
-            double progress = goal.getTargetAmount().compareTo(BigDecimal.ZERO) > 0
-                    ? goal.getCurrentAmount().divide(goal.getTargetAmount(), 4, RoundingMode.HALF_UP)
-                            .multiply(new BigDecimal("100")).doubleValue()
-                    : 0.0;
-            summary.setProgressPercent(progress);
-            return summary;
-        }).collect(Collectors.toList()));
 
         response.setDailySpending(dailySpending);
 

@@ -2,8 +2,6 @@ export interface User {
   id: string;
   email: string;
   name: string;
-  role: 'USER' | 'ADMIN';
-  preferredCurrency: string;
   themePreference: 'LIGHT' | 'DARK' | 'SYSTEM';
 }
 
@@ -20,5 +18,21 @@ export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   message?: string;
+}
+
+export interface Transaction {
+  id: string;
+  date: string;
+  categoryId: string;
+  amount: number;
+  description: string;
+  merchantName: string;
+}
+
+export interface Budget {
+  id: number | string;
+  category: string;
+  limit: number;
+  color?: string;
 }
 
