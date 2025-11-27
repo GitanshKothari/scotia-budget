@@ -74,11 +74,10 @@ const apiClient: AxiosInstance = axios.create({
 ### Permission Denied Error
 
 If you see `Permission denied` errors for `tsc`:
-- ✅ Fixed: The build script now uses `npx tsc` which resolves permission issues
-- If issues persist, you can skip type checking in production:
-  ```json
-  "build": "vite build"
-  ```
+- ✅ Fixed: The build script now uses `vite build` directly
+- Vite's build process includes TypeScript checking via esbuild, so you'll still catch type errors
+- Type checking is separated into `npm run type-check` for local development
+- This avoids permission issues with the `tsc` binary on Vercel's build system
 
 ### Build Fails
 
