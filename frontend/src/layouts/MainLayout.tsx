@@ -44,7 +44,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
               <FaWallet className="text-white text-xl" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">FinTrack</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">FinTracker</h1>
           </div>
         </div>
 

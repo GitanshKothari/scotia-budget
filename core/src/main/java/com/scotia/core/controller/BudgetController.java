@@ -4,34 +4,30 @@ import com.scotia.core.dto.ApiResponse;
 import com.scotia.core.dto.BudgetRequest;
 import com.scotia.core.dto.BudgetResponse;
 import com.scotia.core.dto.UpdateBudgetRequest;
-import com.scotia.core.entity.Budget;
-import com.scotia.core.repository.BudgetRepository;
+import com.scotia.core.service.BudgetService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/core/budgets")
 public class BudgetController {
 
-    private final BudgetRepository budgetRepository;
+    private final BudgetService budgetService;
 
-    public BudgetController(BudgetRepository budgetRepository) {
-        this.budgetRepository = budgetRepository;
+    public BudgetController(BudgetService budgetService) {
+        this.budgetService = budgetService;
     }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<BudgetResponse>>> getBudgets(@RequestHeader("X-User-Id") String userIdHeader) {
         UUID userId = UUID.fromString(userIdHeader);
-        List<Budget> budgets = budgetRepository.findByUserId(userId);
-        List<BudgetResponse> responses = budgets.stream()
-                .map(BudgetResponse::fromEntity)
-                .collect(Collectors.toList());
+        List<BudgetResponse> responses = budgetService.getBudgets(userId);
         return ResponseEntity.ok(ApiResponse.success(responses));
     }
 
@@ -40,16 +36,8 @@ public class BudgetController {
             @RequestHeader("X-User-Id") String userIdHeader,
             @Valid @RequestBody BudgetRequest request) {
         UUID userId = UUID.fromString(userIdHeader);
-
-        Budget budget = new Budget();
-        budget.setUserId(userId);
-        budget.setCategoryId(request.getCategoryId());
-        budget.setMonthlyLimit(request.getMonthlyLimit());
-        budget.setIsActive(true);
-
-        Budget savedBudget = budgetRepository.save(budget);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(ApiResponse.success(BudgetResponse.fromEntity(savedBudget)));
+        BudgetResponse response = budgetService.createBudget(userId, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ApiResponse.success(response));
     }
 
     @PatchMapping("/{id}")
@@ -57,43 +45,28 @@ public class BudgetController {
             @RequestHeader("X-User-Id") String userIdHeader,
             @PathVariable UUID id,
             @RequestBody UpdateBudgetRequest request) {
-        UUID userId = UUID.fromString(userIdHeader);
-
-        Budget budget = budgetRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Budget not found"));
-
-        if (!budget.getUserId().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error("Budget does not belong to user", "FORBIDDEN"));
+        try {
+            UUID userId = UUID.fromString(userIdHeader);
+            BudgetResponse response = budgetService.updateBudget(userId, id, request);
+            return ResponseEntity.ok(ApiResponse.success(response));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(ApiResponse.error(e.getReason(), "FORBIDDEN"));
         }
-
-        if (request.getMonthlyLimit() != null) {
-            budget.setMonthlyLimit(request.getMonthlyLimit());
-        }
-        if (request.getIsActive() != null) {
-            budget.setIsActive(request.getIsActive());
-        }
-
-        Budget updatedBudget = budgetRepository.save(budget);
-        return ResponseEntity.ok(ApiResponse.success(BudgetResponse.fromEntity(updatedBudget)));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Object>> deleteBudget(
             @RequestHeader("X-User-Id") String userIdHeader,
             @PathVariable UUID id) {
-        UUID userId = UUID.fromString(userIdHeader);
-
-        Budget budget = budgetRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Budget not found"));
-
-        if (!budget.getUserId().equals(userId)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(ApiResponse.error("Budget does not belong to user", "FORBIDDEN"));
+        try {
+            UUID userId = UUID.fromString(userIdHeader);
+            budgetService.deleteBudget(userId, id);
+            return ResponseEntity.ok(ApiResponse.success(null));
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode())
+                    .body(ApiResponse.error(e.getReason(), "FORBIDDEN"));
         }
-
-        budgetRepository.delete(budget);
-        return ResponseEntity.ok(ApiResponse.success(null));
     }
 }
 

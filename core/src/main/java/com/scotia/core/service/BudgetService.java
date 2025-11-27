@@ -1,0 +1,73 @@
+package com.scotia.core.service;
+
+import com.scotia.core.dto.BudgetRequest;
+import com.scotia.core.dto.BudgetResponse;
+import com.scotia.core.dto.UpdateBudgetRequest;
+import com.scotia.core.entity.Budget;
+import com.scotia.core.repository.BudgetRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+@Service
+public class BudgetService {
+
+    private final BudgetRepository budgetRepository;
+
+    public BudgetService(BudgetRepository budgetRepository) {
+        this.budgetRepository = budgetRepository;
+    }
+
+    public List<BudgetResponse> getBudgets(UUID userId) {
+        List<Budget> budgets = budgetRepository.findByUserId(userId);
+        return budgets.stream()
+                .map(BudgetResponse::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public BudgetResponse createBudget(UUID userId, BudgetRequest request) {
+        Budget budget = new Budget();
+        budget.setUserId(userId);
+        budget.setCategoryId(request.getCategoryId());
+        budget.setMonthlyLimit(request.getMonthlyLimit());
+        budget.setIsActive(true);
+
+        Budget savedBudget = budgetRepository.save(budget);
+        return BudgetResponse.fromEntity(savedBudget);
+    }
+
+    public BudgetResponse updateBudget(UUID userId, UUID id, UpdateBudgetRequest request) {
+        Budget budget = budgetRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+
+        if (!budget.getUserId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Budget does not belong to user");
+        }
+
+        if (request.getMonthlyLimit() != null) {
+            budget.setMonthlyLimit(request.getMonthlyLimit());
+        }
+        if (request.getIsActive() != null) {
+            budget.setIsActive(request.getIsActive());
+        }
+
+        Budget updatedBudget = budgetRepository.save(budget);
+        return BudgetResponse.fromEntity(updatedBudget);
+    }
+
+    public void deleteBudget(UUID userId, UUID id) {
+        Budget budget = budgetRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Budget not found"));
+
+        if (!budget.getUserId().equals(userId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Budget does not belong to user");
+        }
+
+        budgetRepository.delete(budget);
+    }
+}
+

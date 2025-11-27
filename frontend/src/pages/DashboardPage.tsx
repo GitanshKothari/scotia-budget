@@ -107,17 +107,6 @@ const DashboardPage: React.FC = () => {
     return '#6b7280'; // Gray
   };
 
-  const getCategoryColor = (categoryName: string) => {
-    const name = categoryName.toLowerCase();
-    if (name.includes('food') || name.includes('grocery')) return 'bg-orange-500';
-    if (name.includes('transport') || name.includes('gas')) return 'bg-purple-500';
-    if (name.includes('housing') || name.includes('rent')) return 'bg-blue-500';
-    if (name.includes('entertainment') || name.includes('cinema')) return 'bg-pink-500';
-    if (name.includes('utility')) return 'bg-yellow-500';
-    if (name.includes('salary') || name.includes('income')) return 'bg-green-500';
-    return 'bg-gray-500';
-  };
-
   // Get category background color based on category name (matches TransactionsPage)
   const getCategoryBgColor = (categoryName: string) => {
     const name = categoryName?.toLowerCase() || '';
@@ -207,12 +196,6 @@ const DashboardPage: React.FC = () => {
     date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
     amount: parseFloat(item.amount || 0)
   })) || [];
-
-  // Get consistent colors for pie chart based on category names
-  const getPieChartColor = (categoryName: string): string => {
-    return getCategoryColorHex(categoryName);
-  };
-
 
   // Custom legend renderer for Budget vs Actual chart
   const renderCustomLegend = (props: any) => {
@@ -431,7 +414,7 @@ const DashboardPage: React.FC = () => {
                   dataKey="value"
                 >
                   {pieData.map((entry: any, index: number) => (
-                    <Cell key={`cell-${index}`} fill={getPieChartColor(entry.name)} strokeWidth={0} />
+                    <Cell key={`cell-${index}`} fill={getCategoryColorHex(entry.name)} strokeWidth={0} />
                   ))}
                 </Pie>
                 <Tooltip 

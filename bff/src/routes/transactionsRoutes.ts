@@ -2,7 +2,6 @@ import express, { Response } from 'express';
 import { AuthRequest } from '../types';
 import { coreService } from '../services/coreService';
 import { authMiddleware } from '../middleware/authMiddleware';
-import { exportTransactionsCsv } from '../controllers/csvController';
 
 const router = express.Router();
 
@@ -70,8 +69,6 @@ router.delete('/:id', async (req: AuthRequest, res: Response) => {
     res.status(status).json(data);
   }
 });
-
-router.get('/exportCsv', exportTransactionsCsv);
 
 export default router;
 

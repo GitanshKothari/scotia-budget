@@ -1,0 +1,15 @@
+target/
+.git/
+.gitignore
+.idea/
+*.iml
+.vscode/
+*.log
+*.class
+.DS_Store
+node_modules/
+*.md
+README.md
+PROJECT_STRUCTURE.md
+core.zip
+

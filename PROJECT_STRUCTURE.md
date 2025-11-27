@@ -1,6 +1,6 @@
-# Scotia Budget App - Project Structure Documentation
+# FinTracker - Project Structure Documentation
 
-This document provides a comprehensive overview of the project structure and explains the functionality of each file and directory in the Scotia Budget application.
+This document provides a comprehensive overview of the project structure and explains the functionality of each file and directory in the FinTracker application.
 
 ## Table of Contents
 
@@ -16,7 +16,7 @@ This document provides a comprehensive overview of the project structure and exp
 
 ## Project Overview
 
-Scotia Budget is a full-stack budgeting web application inspired by Scotiabank online banking. It allows users to track transactions, manage budgets, set savings goals, and analyze spending patterns through an intuitive dashboard.
+FinTracker is a full-stack budgeting web application that allows users to track transactions, manage budgets, set savings goals, and analyze spending patterns through an intuitive dashboard.
 
 ---
 
@@ -62,7 +62,7 @@ The frontend is a React application built with TypeScript, Vite, and Tailwind CS
 - **`tsconfig.json`** - TypeScript compiler configuration
 - **`tsconfig.node.json`** - TypeScript config for Node.js tooling
 - **`tailwind.config.js`** - Tailwind CSS configuration:
-  - Custom primary color (Scotia red: `#ec111a`)
+  - Custom primary color (Blue: `#ec111a`)
   - Dark mode support via class strategy
   - Inter font family
 
@@ -283,20 +283,10 @@ The BFF (Backend for Frontend) is a Node.js/Express middleware layer that sits b
   - Aggregates data for dashboard display
   - Proxies requests to Core backend
 
-- **`reportRoutes.ts`** - Report generation routes:
-  - CSV export functionality
-  - Data aggregation for reports
-
 - **`userRoutes.ts`** - User management routes:
   - User profile updates
   - Theme preference updates
   - Proxies requests to Core backend
-
-#### Controllers (`src/controllers/`)
-
-- **`csvController.ts`** - CSV export controller:
-  - Generates CSV files from transaction/budget data
-  - Handles CSV formatting and download
 
 #### Types (`src/types/`)
 

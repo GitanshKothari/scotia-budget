@@ -8,7 +8,6 @@ import categoriesRoutes from './routes/categoriesRoutes';
 import budgetsRoutes from './routes/budgetsRoutes';
 import transactionsRoutes from './routes/transactionsRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
-import reportRoutes from './routes/reportRoutes';
 import userRoutes from './routes/userRoutes';
 
 dotenv.config();
@@ -27,7 +26,6 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/budgets', budgetsRoutes);
 app.use('/api/transactions', transactionsRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-app.use('/api/report', reportRoutes);
 app.use('/api/users', userRoutes);
 
 app.listen(PORT, () => {

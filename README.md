@@ -1,6 +1,6 @@
-# Scotia Budget App
+# FinTracker
 
-A full stack budgeting web application inspired by Scotiabank online banking.
+A full stack budgeting web application for tracking expenses, managing budgets, and analyzing spending patterns.
 
 ## Architecture
 
@@ -65,7 +65,6 @@ This repository contains three independent projects:
 - Budget management with monthly limits
 - Savings goals tracking
 - Dashboard with charts and spending analysis
-- CSV export functionality
 - Dark mode support
 - Notifications for budget thresholds and goal completion
 
