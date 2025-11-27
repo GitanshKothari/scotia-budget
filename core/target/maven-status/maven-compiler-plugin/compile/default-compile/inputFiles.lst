@@ -4,9 +4,13 @@ C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\sr
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\seed\DataSeeder.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\config\GlobalExceptionHandler.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\repository\UserRepository.java
+C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\service\TransactionService.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\controller\BudgetController.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\entity\User.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\repository\TransactionRepository.java
+C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\service\CategoryService.java
+C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\service\UserService.java
+C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\service\BudgetService.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\config\UserHeaderInterceptor.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\controller\UserController.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\dto\TransactionResponse.java
@@ -19,6 +23,7 @@ C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\sr
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\controller\CategoryController.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\dto\UserResponse.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\dto\ApiResponse.java
+C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\service\AuthService.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\dto\BudgetRequest.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\dto\TransactionRequest.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\controller\HealthController.java
@@ -29,5 +34,6 @@ C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\sr
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\dto\UpdateTransactionRequest.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\dto\DashboardSummaryResponse.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\dto\VerifyRequest.java
+C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\service\DashboardService.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\CoreApplication.java
 C:\Users\gitan\Workspace\Personal_Projects\webdev_projects\scotia-budget\core\src\main\java\com\scotia\core\entity\Transaction.java

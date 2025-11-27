@@ -15,7 +15,6 @@ com\scotia\core\dto\VerifyRequest.class
 com\scotia\core\config\UserHeaderInterceptor.class
 com\scotia\core\controller\DashboardController.class
 com\scotia\core\dto\UpdateUserRequest.class
-com\scotia\core\entity\User$UserRole.class
 com\scotia\core\dto\TransactionResponse.class
 com\scotia\core\controller\HealthController.class
 com\scotia\core\entity\Budget.class
@@ -23,7 +22,6 @@ com\scotia\core\dto\BudgetResponse.class
 com\scotia\core\controller\CategoryController.class
 com\scotia\core\dto\TransactionRequest.class
 com\scotia\core\entity\Category.class
-com\scotia\core\entity\Transaction$TransactionType.class
 com\scotia\core\dto\CategoryResponse.class
 com\scotia\core\dto\DashboardSummaryResponse$SpendingByCategory.class
 com\scotia\core\controller\BudgetController.class
