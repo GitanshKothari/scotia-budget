@@ -192,10 +192,15 @@ const DashboardPage: React.FC = () => {
   }) || [];
 
   // Daily spending data
-  const dailySpendingData = data.dailySpending?.map((item: any) => ({
-    date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    amount: parseFloat(item.amount || 0)
-  })) || [];
+  const dailySpendingData = data.dailySpending?.map((item: any) => {
+    // Parse date string (YYYY-MM-DD) without timezone conversion
+    const [year, month, day] = item.date.split('-').map(Number);
+    const dateObj = new Date(year, month - 1, day); // month is 0-indexed in JS Date
+    return {
+      date: dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+      amount: parseFloat(item.amount || 0)
+    };
+  }) || [];
 
   // Custom legend renderer for Budget vs Actual chart
   const renderCustomLegend = (props: any) => {
