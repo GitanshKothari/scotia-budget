@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, AuthResponse, ApiResponse } from '../types';
-import axios from 'axios';
+import apiClient from '../lib/apiClient';
 
 interface AuthContextType {
   user: User | null;
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post<AuthResponse>('/api/auth/login', {
+      const response = await apiClient.post<AuthResponse>('/api/auth/login', {
         email,
         password
       });
@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const register = async (name: string, email: string, password: string) => {
     try {
-      const response = await axios.post<ApiResponse<User>>('/api/auth/register', {
+      const response = await apiClient.post<ApiResponse<User>>('/api/auth/register', {
         name,
         email,
         password
