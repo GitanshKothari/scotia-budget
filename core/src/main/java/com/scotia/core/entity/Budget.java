@@ -20,11 +20,13 @@ public class Budget {
     @Column(columnDefinition = "uuid")
     private UUID id;
 
-    @Column(nullable = false, columnDefinition = "uuid")
-    private UUID userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_budget_user"))
+    private User user;
 
-    @Column(nullable = false, columnDefinition = "uuid")
-    private UUID categoryId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false, foreignKey = @ForeignKey(name = "fk_budget_category"))
+    private Category category;
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal monthlyLimit;
@@ -47,6 +49,15 @@ public class Budget {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    // Convenience methods for backward compatibility
+    public UUID getUserId() {
+        return user != null ? user.getId() : null;
+    }
+
+    public UUID getCategoryId() {
+        return category != null ? category.getId() : null;
     }
 }
 

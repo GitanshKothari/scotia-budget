@@ -39,7 +39,7 @@ public class DashboardService {
         DashboardSummaryResponse response = new DashboardSummaryResponse();
 
         // Only get default categories (no custom categories)
-        List<Category> allCategories = categoryRepository.findByUserIdIsNull();
+        List<Category> allCategories = categoryRepository.findByUserIsNull();
         Map<UUID, String> categoryMap = allCategories.stream()
                 .collect(Collectors.toMap(Category::getId, Category::getName));
 
@@ -83,7 +83,7 @@ public class DashboardService {
                 .collect(Collectors.toList());
 
         // Budgets with spent amounts
-        List<Budget> budgets = budgetRepository.findByUserIdAndIsActive(userId, true);
+        List<Budget> budgets = budgetRepository.findByUser_IdAndIsActive(userId, true);
         List<DashboardSummaryResponse.BudgetSummary> budgetSummaries = new ArrayList<>();
         BigDecimal totalBudgetLimit = BigDecimal.ZERO;
         BigDecimal totalSpent = BigDecimal.ZERO;

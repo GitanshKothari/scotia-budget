@@ -11,7 +11,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -57,7 +56,7 @@ public class DataSeeder implements CommandLineRunner {
 
         for (int i = 0; i < defaultCategoryNames.size(); i++) {
             Category category = new Category();
-            category.setUserId(null); // Default category
+            category.setUser(null); // Default category
             category.setName(defaultCategoryNames.get(i));
             category.setType(defaultCategoryTypes.get(i));
             category.setIsDefault(true);
@@ -82,8 +81,8 @@ public class DataSeeder implements CommandLineRunner {
         // Create budgets for demo user
         if (groceriesCategory != null) {
             Budget groceriesBudget = new Budget();
-            groceriesBudget.setUserId(demoUser.getId());
-            groceriesBudget.setCategoryId(groceriesCategory.getId());
+            groceriesBudget.setUser(demoUser);
+            groceriesBudget.setCategory(groceriesCategory);
             groceriesBudget.setMonthlyLimit(new BigDecimal("400.00"));
             groceriesBudget.setIsActive(true);
             budgetRepository.save(groceriesBudget);
@@ -91,8 +90,8 @@ public class DataSeeder implements CommandLineRunner {
 
         if (transportCategory != null) {
             Budget transportBudget = new Budget();
-            transportBudget.setUserId(demoUser.getId());
-            transportBudget.setCategoryId(transportCategory.getId());
+            transportBudget.setUser(demoUser);
+            transportBudget.setCategory(transportCategory);
             transportBudget.setMonthlyLimit(new BigDecimal("200.00"));
             transportBudget.setIsActive(true);
             budgetRepository.save(transportBudget);
@@ -100,8 +99,8 @@ public class DataSeeder implements CommandLineRunner {
 
         if (billsCategory != null) {
             Budget billsBudget = new Budget();
-            billsBudget.setUserId(demoUser.getId());
-            billsBudget.setCategoryId(billsCategory.getId());
+            billsBudget.setUser(demoUser);
+            billsBudget.setCategory(billsCategory);
             billsBudget.setMonthlyLimit(new BigDecimal("300.00"));
             billsBudget.setIsActive(true);
             budgetRepository.save(billsBudget);
@@ -109,8 +108,8 @@ public class DataSeeder implements CommandLineRunner {
 
         if (shoppingCategory != null) {
             Budget shoppingBudget = new Budget();
-            shoppingBudget.setUserId(demoUser.getId());
-            shoppingBudget.setCategoryId(shoppingCategory.getId());
+            shoppingBudget.setUser(demoUser);
+            shoppingBudget.setCategory(shoppingCategory);
             shoppingBudget.setMonthlyLimit(new BigDecimal("150.00"));
             shoppingBudget.setIsActive(true);
             budgetRepository.save(shoppingBudget);
@@ -173,8 +172,8 @@ public class DataSeeder implements CommandLineRunner {
     private void createTransaction(User user, Category category,
                                    BigDecimal amount, String description, String merchantName, LocalDateTime date) {
         Transaction transaction = new Transaction();
-        transaction.setUserId(user.getId());
-        transaction.setCategoryId(category != null ? category.getId() : null);
+        transaction.setUser(user);
+        transaction.setCategory(category);
         transaction.setAmount(amount);
         transaction.setDescription(description);
         transaction.setMerchantName(merchantName);

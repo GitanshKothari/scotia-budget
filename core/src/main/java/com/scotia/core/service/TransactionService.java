@@ -3,8 +3,12 @@ package com.scotia.core.service;
 import com.scotia.core.dto.TransactionRequest;
 import com.scotia.core.dto.TransactionResponse;
 import com.scotia.core.dto.UpdateTransactionRequest;
+import com.scotia.core.entity.Category;
 import com.scotia.core.entity.Transaction;
+import com.scotia.core.entity.User;
+import com.scotia.core.repository.CategoryRepository;
 import com.scotia.core.repository.TransactionRepository;
+import com.scotia.core.repository.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,9 +22,16 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    public TransactionService(
+            TransactionRepository transactionRepository,
+            UserRepository userRepository,
+            CategoryRepository categoryRepository) {
         this.transactionRepository = transactionRepository;
+        this.userRepository = userRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<TransactionResponse> getTransactions(
@@ -37,9 +48,16 @@ public class TransactionService {
     }
 
     public TransactionResponse createTransaction(UUID userId, TransactionRequest request) {
+        User user = userRepository.getReferenceById(userId);
+        
         Transaction transaction = new Transaction();
-        transaction.setUserId(userId);
-        transaction.setCategoryId(request.getCategoryId());
+        transaction.setUser(user);
+        
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.getReferenceById(request.getCategoryId());
+            transaction.setCategory(category);
+        }
+        
         transaction.setAmount(request.getAmount());
         transaction.setDescription(request.getDescription());
         transaction.setMerchantName(request.getMerchantName());
@@ -58,7 +76,8 @@ public class TransactionService {
         }
 
         if (request.getCategoryId() != null) {
-            transaction.setCategoryId(request.getCategoryId());
+            Category category = categoryRepository.getReferenceById(request.getCategoryId());
+            transaction.setCategory(category);
         }
         if (request.getAmount() != null) {
             transaction.setAmount(request.getAmount());

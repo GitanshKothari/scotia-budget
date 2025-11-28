@@ -19,8 +19,9 @@ public class Category {
     @Column(columnDefinition = "uuid")
     private UUID id;
 
-    @Column(nullable = true, columnDefinition = "uuid")
-    private UUID userId; // null means default category for all users
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true, foreignKey = @ForeignKey(name = "fk_category_user"))
+    private User user; // null means default category for all users
 
     @Column(nullable = false)
     private String name;
@@ -47,6 +48,11 @@ public class Category {
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    // Convenience method for backward compatibility
+    public UUID getUserId() {
+        return user != null ? user.getId() : null;
     }
 
     public enum CategoryType {

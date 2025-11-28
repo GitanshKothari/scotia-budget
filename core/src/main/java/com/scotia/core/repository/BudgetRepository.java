@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface BudgetRepository extends JpaRepository<Budget, UUID> {
-    List<Budget> findByUserId(UUID userId);
-    List<Budget> findByUserIdAndIsActive(UUID userId, Boolean isActive);
+    List<Budget> findByUser_Id(UUID userId);
+    List<Budget> findByUser_IdAndIsActive(UUID userId, Boolean isActive);
 }
 

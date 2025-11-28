@@ -19,7 +19,7 @@ public class CategoryService {
 
     public List<CategoryResponse> getCategories() {
         // Only return default categories (userId = null)
-        List<Category> defaultCategories = categoryRepository.findByUserIdIsNull();
+        List<Category> defaultCategories = categoryRepository.findByUserIsNull();
         
         return defaultCategories.stream()
                 .map(CategoryResponse::fromEntity)

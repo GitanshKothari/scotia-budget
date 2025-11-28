@@ -44,6 +44,7 @@ const TransactionsPage: React.FC = () => {
     endDate: ''
   });
   const [searchInput, setSearchInput] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     fetchCategories();
@@ -89,10 +90,19 @@ const TransactionsPage: React.FC = () => {
 
   const handleSubmitTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
+    
+    // Client-side validation: amount must be greater than 0
+    const amountValue = parseFloat(formData.amount);
+    if (isNaN(amountValue) || amountValue <= 0) {
+      setErrors({ amount: 'Amount must be greater than 0' });
+      return;
+    }
+
     try {
       const payload = {
         ...formData,
-        amount: parseFloat(formData.amount),
+        amount: amountValue,
         date: new Date(formData.date).toISOString(),
         categoryId: formData.categoryId
       };
@@ -105,6 +115,7 @@ const TransactionsPage: React.FC = () => {
       
       setShowModal(false);
       setEditingTransaction(null);
+      setErrors({});
       setFormData({
         categoryId: '',
         amount: '',
@@ -113,13 +124,62 @@ const TransactionsPage: React.FC = () => {
         date: new Date().toISOString().split('T')[0]
       });
       fetchTransactions();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save transaction', error);
+      
+      // Extract validation errors from backend response
+      if (error.response?.data?.message) {
+        const errorMessage = error.response.data.message;
+        
+        // Check if it's a validation error with field-specific messages
+        // Format: "Validation failed: {amount=Amount must be positive, description=Description is required}"
+        if (errorMessage.includes('Validation failed:')) {
+          try {
+            // Extract the map part: {amount=Amount must be positive, description=Description is required}
+            const errorMatch = errorMessage.match(/\{([^}]+)\}/);
+            if (errorMatch) {
+              const errorMap: Record<string, string> = {};
+              const mapContent = errorMatch[1];
+              
+              // Split by comma, but be careful with commas inside error messages
+              // Simple approach: split by ", " (comma followed by space) which is the Java Map.toString() format
+              const errorPairs = mapContent.split(/,\s*(?=\w+=)/);
+              errorPairs.forEach(pair => {
+                const equalIndex = pair.indexOf('=');
+                if (equalIndex > 0) {
+                  const key = pair.substring(0, equalIndex).trim();
+                  const value = pair.substring(equalIndex + 1).trim();
+                  if (key && value) {
+                    errorMap[key] = value;
+                  }
+                }
+              });
+              
+              if (Object.keys(errorMap).length > 0) {
+                setErrors(errorMap);
+              } else {
+                setErrors({ general: errorMessage });
+              }
+            } else {
+              setErrors({ general: errorMessage });
+            }
+          } catch (parseError) {
+            setErrors({ general: errorMessage });
+          }
+        } else {
+          setErrors({ general: errorMessage });
+        }
+      } else if (error.response?.data?.error) {
+        setErrors({ general: error.response.data.error });
+      } else {
+        setErrors({ general: 'Failed to save transaction. Please try again.' });
+      }
     }
   };
 
   const handleEdit = (transaction: Transaction) => {
     setEditingTransaction(transaction);
+    setErrors({});
     setFormData({
       categoryId: transaction.categoryId,
       amount: transaction.amount.toString(),
@@ -145,6 +205,7 @@ const TransactionsPage: React.FC = () => {
   const handleCancel = () => {
     setShowModal(false);
     setEditingTransaction(null);
+    setErrors({});
     setFormData({
       categoryId: '',
       amount: '',
@@ -158,6 +219,7 @@ const TransactionsPage: React.FC = () => {
 
   const openAddModal = () => {
     setEditingTransaction(null);
+    setErrors({});
     setFormData({
       categoryId: categories[0]?.id || '',
       amount: '',
@@ -356,15 +418,30 @@ const TransactionsPage: React.FC = () => {
             </div>
             <div className="p-4">
               <form onSubmit={handleSubmitTransaction} className="space-y-4">
+                {errors.general && (
+                  <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
+                    {errors.general}
+                  </div>
+                )}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
                   <input 
                     required 
                     type="text" 
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-white" 
+                    className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-white ${
+                      errors.description 
+                        ? 'border-red-300 dark:border-red-600' 
+                        : 'border-gray-300 dark:border-gray-600'
+                    }`}
                     value={formData.description} 
-                    onChange={e => setFormData({...formData, description: e.target.value})} 
+                    onChange={e => {
+                      setFormData({...formData, description: e.target.value});
+                      if (errors.description) setErrors({...errors, description: ''});
+                    }} 
                   />
+                  {errors.description && (
+                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.description}</p>
+                  )}
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -373,43 +450,83 @@ const TransactionsPage: React.FC = () => {
                       required 
                       type="number" 
                       step="0.01" 
-                      min="0" 
-                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-white" 
+                      min="0.01" 
+                      className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-white ${
+                        errors.amount 
+                          ? 'border-red-300 dark:border-red-600' 
+                          : 'border-gray-300 dark:border-gray-600'
+                      }`}
                       value={formData.amount} 
-                      onChange={e => setFormData({...formData, amount: e.target.value})} 
+                      onChange={e => {
+                        setFormData({...formData, amount: e.target.value});
+                        if (errors.amount) setErrors({...errors, amount: ''});
+                      }} 
                     />
+                    {errors.amount && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.amount}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Date</label>
                     <input 
                       required 
                       type="date" 
-                      className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-white" 
+                      className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-white ${
+                        errors.date 
+                          ? 'border-red-300 dark:border-red-600' 
+                          : 'border-gray-300 dark:border-gray-600'
+                      }`}
                       value={formData.date} 
-                      onChange={e => setFormData({...formData, date: e.target.value})} 
+                      onChange={e => {
+                        setFormData({...formData, date: e.target.value});
+                        if (errors.date) setErrors({...errors, date: ''});
+                      }} 
                     />
+                    {errors.date && (
+                      <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.date}</p>
+                    )}
                   </div>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
                   <select 
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700 dark:text-white" 
+                    className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none bg-white dark:bg-gray-700 dark:text-white ${
+                      errors.categoryId 
+                        ? 'border-red-300 dark:border-red-600' 
+                        : 'border-gray-300 dark:border-gray-600'
+                    }`}
                     value={formData.categoryId} 
-                    onChange={e => setFormData({...formData, categoryId: e.target.value})}
+                    onChange={e => {
+                      setFormData({...formData, categoryId: e.target.value});
+                      if (errors.categoryId) setErrors({...errors, categoryId: ''});
+                    }}
                     required
                   >
                     <option value="">Select Category</option>
                     {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name}</option>)}
                   </select>
+                  {errors.categoryId && (
+                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.categoryId}</p>
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Merchant</label>
                   <input 
                     type="text" 
-                    className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-white" 
+                    className={`w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-700 dark:text-white ${
+                      errors.merchantName 
+                        ? 'border-red-300 dark:border-red-600' 
+                        : 'border-gray-300 dark:border-gray-600'
+                    }`}
                     value={formData.merchantName} 
-                    onChange={e => setFormData({...formData, merchantName: e.target.value})} 
+                    onChange={e => {
+                      setFormData({...formData, merchantName: e.target.value});
+                      if (errors.merchantName) setErrors({...errors, merchantName: ''});
+                    }} 
                   />
+                  {errors.merchantName && (
+                    <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.merchantName}</p>
+                  )}
                 </div>
                 <div className="pt-4 flex justify-end gap-3">
                   <button 

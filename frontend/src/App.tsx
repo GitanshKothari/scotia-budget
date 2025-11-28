@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage';
 import TransactionsPage from './pages/TransactionsPage';
 import BudgetsPage from './pages/BudgetsPage';
 import SettingsPage from './pages/SettingsPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 function AppRoutes() {
   const { isAuthenticated } = useAuth();
@@ -59,6 +60,7 @@ function AppRoutes() {
           }
         />
         <Route path="/" element={<Navigate to="/dashboard" />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );
