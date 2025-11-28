@@ -346,8 +346,8 @@ const TransactionsPage: React.FC = () => {
               ) : (
                 transactions.map((t) => {
                   const category = categories.find(c => c.id === t.categoryId);
-                  const isDebit = parseFloat(t.amount.toString()) < 0;
-                  const amount = Math.abs(parseFloat(t.amount.toString()));
+                  const isExpense = category?.type === 'EXPENSE';
+                  const amount = parseFloat(t.amount.toString());
                   return (
                     <tr key={t.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-700/50 transition-colors group">
                       <td className="px-6 py-4">
@@ -372,9 +372,9 @@ const TransactionsPage: React.FC = () => {
                         {new Date(t.date).toLocaleDateString()}
                       </td>
                       <td className={`px-6 py-4 text-right font-bold ${
-                        isDebit ? 'text-gray-900 dark:text-white' : 'text-green-600 dark:text-green-400'
+                        isExpense ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
                       }`}>
-                        {isDebit ? '-' : '+'}${amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                        {isExpense ? '-' : '+'}${Math.abs(amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                       </td>
                       <td className="px-6 py-4 text-right">
                         <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">

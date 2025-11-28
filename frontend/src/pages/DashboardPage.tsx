@@ -505,7 +505,8 @@ const DashboardPage: React.FC = () => {
             ) : (
               recentTransactions.map((transaction) => {
                 const category = categories.find(c => c.id === transaction.categoryId);
-                const isDebit = transaction.type === 'DEBIT';
+                const isExpense = category?.type === 'EXPENSE';
+                const amount = parseFloat(transaction.amount.toString());
                 return (
                   <div key={transaction.id} className="flex items-center gap-3 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${getCategoryBgColor(category?.name || '')}`}>
@@ -519,8 +520,8 @@ const DashboardPage: React.FC = () => {
                         {new Date(transaction.date).toLocaleDateString()} • {category?.name || 'Uncategorized'}
                       </p>
                     </div>
-                    <p className={`text-sm font-semibold ${isDebit ? 'text-red-600' : 'text-green-600'}`}>
-                      {isDebit ? '-' : '+'}${parseFloat(transaction.amount.toString()).toFixed(2)}
+                    <p className={`text-sm font-semibold ${isExpense ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'}`}>
+                      {isExpense ? '-' : '+'}${Math.abs(amount).toFixed(2)}
                     </p>
                   </div>
                 );
