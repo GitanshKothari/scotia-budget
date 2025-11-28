@@ -1,7 +1,11 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+// Debug: Log the API URL (remove after debugging)
+console.log('🔍 API Client Base URL:', baseURL);
+
 const apiClient: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3001',
+  baseURL: baseURL,
   headers: {
     'Content-Type': 'application/json'
   }
